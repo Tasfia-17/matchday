@@ -28,9 +28,13 @@ async function connectWithRetry(attempts = 8, delay = 500) {
   logger.error('Prisma failed to connect after retries; database operations may fail until a connection is available.');
 }
 
-connectWithRetry(8, 500).catch(err => {
-  logger.error('Unexpected error while trying to connect Prisma', err);
-});
+// Only attempt connection at runtime — skip during Next.js static build
+// (DATABASE_URL is not set in Vercel's build environment).
+if (process.env.DATABASE_URL) {
+  connectWithRetry(8, 500).catch(err => {
+    logger.error('Unexpected error while trying to connect Prisma', err);
+  });
+}
 
 // Export a function to check if Prisma is connected
 export async function checkDatabaseConnection(): Promise<boolean> {
