@@ -2,12 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { InviteClient } from './InviteClient';
+import { unstable_noStore } from 'next/cache';
 
 interface Props {
   params: Promise<{ roomId: string }>;
 }
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { roomId } = await params;
@@ -22,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function InvitePage({ params }: Props) {
+  unstable_noStore();
   const { roomId } = await params;
 
   // Fetch room data server-side

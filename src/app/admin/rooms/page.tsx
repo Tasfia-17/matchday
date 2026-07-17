@@ -1,9 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import RoomsClient from '@/components/admin/RoomsClient';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminRoomsPage() {
+  unstable_noStore();
   // Pre-fetch all rooms
   const initialRooms = await prisma.room.findMany({
     orderBy: { onlineCount: 'desc' },

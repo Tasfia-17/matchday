@@ -1,9 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import UsersClient from '@/components/admin/UsersClient';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage() {
+  unstable_noStore();
   // Pre-fetch initial users (first 50) to make the initial load instant
   const initialUsers = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },

@@ -2,10 +2,12 @@ import { prisma } from '@/lib/prisma';
 import { Users, Monitor, MessageSquare, Activity, UserPlus, AlertTriangle } from 'lucide-react';
 import OverviewCharts from '@/components/admin/OverviewCharts';
 import Link from 'next/link';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
+  unstable_noStore();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
