@@ -28,9 +28,11 @@ async function connectWithRetry(attempts = 8, delay = 500) {
   logger.error('Prisma failed to connect after retries; database operations may fail until a connection is available.');
 }
 
-// Only attempt connection at runtime — skip during Next.js static build
-// (DATABASE_URL is not set in Vercel's build environment).
-if (process.env.DATABASE_URL) {
+// Skip connection warmup when running with the build-time placeholder URL.
+// The placeholder lets Prisma construct without P1012, but is not connectable.
+// All routes that use Prisma have force-dynamic, so no query runs at build time.
+const isBuildPlaceholder = process.env.DATABASE_URL === 'postgresql://build:build@localhost:5432/build_placeholder';
+if (!isBuildPlaceholder) {
   connectWithRetry(8, 500).catch(err => {
     logger.error('Unexpected error while trying to connect Prisma', err);
   });
