@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dns from 'dns';
 import net from 'net';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 /**
  * IPTV Proxy Route
@@ -172,6 +173,7 @@ function resolveUrl(url: string, baseUrl: string): string {
 }
 
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   const url = request.nextUrl.searchParams.get('url');
   const userAgent = request.nextUrl.searchParams.get('ua');
   const referrer = request.nextUrl.searchParams.get('referer');

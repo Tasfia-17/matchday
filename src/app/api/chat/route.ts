@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -68,6 +69,7 @@ function getGeminiModel(apiKey: string) {
 }
 
 export async function POST(request: Request) {
+  unstable_noStore();
     try {
         // Require authentication
         const session = await getServerSession(authOptions);
@@ -155,6 +157,7 @@ export async function POST(request: Request) {
 
 // Only allow POST
 export async function GET() {
+  unstable_noStore();
     return NextResponse.json(
         { message: 'MatchDay AI Chatbot API 🐱 — Use POST to send messages.' },
         { status: 200 }

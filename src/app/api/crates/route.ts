@@ -3,8 +3,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -69,6 +73,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -123,6 +124,7 @@ const CLIENT_ONLY_ACHIEVEMENTS = new Set(['night-owl', 'early-bird', 'konami', '
 
 // GET — check all achievements, persist newly unlocked to DB, return full state
 export async function GET() {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -214,6 +216,7 @@ export async function GET() {
 
 // POST — award a client-side achievement (night-owl, early-bird, konami, theme-explorer)
 export async function POST(req: Request) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {

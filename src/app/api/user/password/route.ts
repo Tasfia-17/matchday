@@ -4,11 +4,13 @@ import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { authOptions } from '@/lib/auth';
 import { compare, hash } from 'bcryptjs';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.name) {

@@ -5,11 +5,15 @@ import { authOptions } from '@/lib/auth';
 import { getAdminBridgeSecret, getSocketServerAdminUrl } from '@/lib/adminBridge';
 import { isSuperAdmin } from '@/lib/security';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {
@@ -54,6 +58,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {

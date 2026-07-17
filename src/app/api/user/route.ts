@@ -6,11 +6,13 @@ import { escapeHtml, sanitizeString, isValidUsername } from '@/lib/security';
 import logger from '@/lib/logger';
 import { invalidateFriendsCacheFor } from '@/lib/cache';
 import redisClient, { isRedisAvailable } from '@/lib/redis';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -55,6 +57,7 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {

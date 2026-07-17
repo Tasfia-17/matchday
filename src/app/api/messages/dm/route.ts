@@ -4,11 +4,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
 import { isValidId } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  unstable_noStore();
   const start = Date.now();
   try {
     const session = await getServerSession(authOptions);
@@ -55,6 +57,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const start = Date.now();
   try {
     const session = await getServerSession(authOptions);

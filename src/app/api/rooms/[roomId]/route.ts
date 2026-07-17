@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,7 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
@@ -61,6 +63,7 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
+  unstable_noStore();
   try {
     const { roomId } = await params;
 
@@ -93,6 +96,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {

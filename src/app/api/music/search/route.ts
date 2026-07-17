@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import YouTube from 'youtube-sr';
 import logger from '@/lib/logger';
 import { SEARCH_CACHE } from '@/lib/cache';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,6 +54,7 @@ const SEARCH_RATE_LIMIT = 30; // requests per window
 const SEARCH_RATE_WINDOW = 60_000; // 1 minute
 
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   try {
     // Rate limit by IP
     const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';

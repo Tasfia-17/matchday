@@ -5,6 +5,7 @@ import logger from '@/lib/logger';
 import { invalidateAllFriendCaches } from '@/lib/cache';
 import { authOptions } from '@/lib/auth';
 import { isValidId } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,7 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.name) {

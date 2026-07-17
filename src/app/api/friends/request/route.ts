@@ -5,12 +5,14 @@ import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { invalidateFriendsCacheFor } from '@/lib/cache';
 import { isValidId, checkRateLimit } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 // Send friend request
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.name) {
@@ -116,6 +118,7 @@ export async function POST(request: Request) {
 
 // Get pending friend requests
 export async function GET(request: Request) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.name) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
@@ -50,6 +51,7 @@ export interface MovieItem {
 }
 
 export async function GET(req: NextRequest) {
+  unstable_noStore();
   const key = process.env.TMDB_API_KEY || '';
   if (!key) {
     return NextResponse.json({ error: 'TMDB_API_KEY not configured' }, { status: 500 });

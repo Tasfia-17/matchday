@@ -4,8 +4,12 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { calculateLevel } from '@/lib/xp';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -82,6 +86,7 @@ const ALLOWED_GAME_TYPES = ['snake', 'clicker', '2048', 'minesweeper', 'reaction
 const MAX_SCORE = 999999999; // Prevent integer overflow
 
 export async function POST(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {

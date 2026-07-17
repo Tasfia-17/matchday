@@ -3,12 +3,16 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { scoreMatchPredictions } from '@/lib/predictionEngine';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 /** GET /api/matches/[matchId] — match detail with user's prediction */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ matchId: string }> }
 ) {
+  unstable_noStore();
   const { matchId } = await params;
   const session = await getServerSession(authOptions);
 
@@ -44,6 +48,7 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ matchId: string }> }
 ) {
+  unstable_noStore();
   const { matchId } = await params;
   const session = await getServerSession(authOptions);
 

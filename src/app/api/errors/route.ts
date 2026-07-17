@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { isAdminUser } from '@/lib/security';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,7 @@ const errorLogs: ErrorReport[] = [];
 const MAX_STORED_ERRORS = 1000;
 
 export async function POST(request: NextRequest) {
+  unstable_noStore();
   try {
     const body = await request.json();
     const { errors } = body as { errors: ErrorReport[] };
@@ -64,6 +66,7 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint for viewing errors (ADMIN ONLY)
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   // Security: Require admin authentication
   const session = await getServerSession(authOptions);
 

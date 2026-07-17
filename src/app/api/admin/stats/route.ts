@@ -3,11 +3,13 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.name) {

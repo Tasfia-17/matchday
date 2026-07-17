@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import logger from "@/lib/logger";
 import { getProfileViewByUsername } from "@/lib/profileData";
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ username: string }> },
 ) {
+  unstable_noStore();
   try {
     const [{ username: rawUsername }, session] = await Promise.all([
       params,

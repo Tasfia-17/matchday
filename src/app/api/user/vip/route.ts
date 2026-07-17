@@ -10,6 +10,7 @@ import {
   resolveProfileSceneId,
 } from "@/lib/profileData";
 import {
+import { unstable_noStore } from 'next/cache';
   PROFILE_SCENE_EFFECT_IDS,
   PROFILE_SCENE_IDS,
 } from "@/lib/profileTypes";
@@ -78,6 +79,7 @@ const VIP_SELECT = {
 } as const;
 
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name) {
@@ -110,6 +112,7 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name) {

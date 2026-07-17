@@ -4,8 +4,12 @@ import logger from '@/lib/logger';
 import { sendPasswordResetEmail } from '@/lib/email';
 import { checkRateLimit } from '@/lib/security';
 import crypto from 'crypto';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Rate limit: 3 password reset requests per 15 minutes per IP
     const clientIP = request.headers.get('x-forwarded-for') || 'unknown';

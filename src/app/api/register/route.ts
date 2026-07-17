@@ -5,6 +5,9 @@ import logger from '@/lib/logger';
 import { sanitizeString, isValidUsername, isValidPassword, checkRateLimit } from '@/lib/security';
 import { generateVerificationCode, sendVerificationEmail } from '@/lib/email';
 import { Prisma } from '@prisma/client';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 // Minimum age (13 years)
 const MIN_AGE = 13;
@@ -89,6 +92,7 @@ function isValidBirthDate(birthDate: string): { valid: boolean; message?: string
 }
 
 export async function POST(req: Request) {
+  unstable_noStore();
   try {
     // Rate limiting - 5 registrations per hour per IP
     const clientIP = req.headers.get('x-forwarded-for') || 'unknown';

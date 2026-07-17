@@ -11,6 +11,7 @@ import {
   getResolvedShowcaseSlots,
 } from "@/lib/profileData";
 import type { ProfileShowcaseItemType } from "@/lib/profileTypes";
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ type ShowcaseInput = {
 };
 
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name) {
@@ -57,6 +59,7 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name) {

@@ -4,11 +4,15 @@ import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { isSuperAdmin } from '@/lib/security';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {

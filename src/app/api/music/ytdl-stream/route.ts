@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,6 +61,7 @@ async function getFastestInstance(videoId: string): Promise<string | null> {
 }
 
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   const videoId = request.nextUrl.searchParams.get('id');
   if (!videoId) {
     return NextResponse.json({ error: 'Video ID required' }, { status: 400 });

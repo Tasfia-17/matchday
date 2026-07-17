@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUpcomingEvents, normaliseStatus, LEAGUES } from '@/lib/sportsApi';
+import { unstable_noStore } from 'next/cache';
 
-export const revalidate = 300; // cache 5 min
+export const dynamic = 'force-dynamic';
+
 
 export async function GET(req: Request) {
+  unstable_noStore();
   const { searchParams } = new URL(req.url);
   const sport = searchParams.get('sport') ?? 'football';
   const leagueId = searchParams.get('league') ?? LEAGUES.EPL;

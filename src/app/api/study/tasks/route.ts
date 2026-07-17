@@ -10,10 +10,12 @@ import {
   unauthorizedStudyResponse,
 } from '@/lib/studyRouteUtils';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  unstable_noStore();
   try {
     const userId = await getStudySessionUserId();
     if (!userId) {
@@ -32,6 +34,7 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  unstable_noStore();
   try {
     const userId = await getStudySessionUserId();
     if (!userId) {

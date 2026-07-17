@@ -3,9 +3,13 @@ import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { generateVerificationCode, sendVerificationEmail } from '@/lib/email';
 import { checkRateLimit } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 // Verify email with 4-digit code
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Rate limit: 5 verification attempts per 15 minutes per IP
     const clientIP = request.headers.get('x-forwarded-for') || 'unknown';

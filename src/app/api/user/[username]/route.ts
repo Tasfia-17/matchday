@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { isAdminUser } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -48,6 +49,7 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
+  unstable_noStore();
   try {
     const resolvedParams = await params;
     const session = await getServerSession(authOptions);

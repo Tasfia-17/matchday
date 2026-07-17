@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   // Founder is highest priority, then ADMIN, then PURR_ADMIN
   const userRole = ((session?.user as any)?.role || '').toLowerCase();

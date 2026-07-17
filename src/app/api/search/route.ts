@@ -73,11 +73,13 @@ const tmdbFetch = async (endpoint: string): Promise<any> => {
 import { SEARCH_CACHE } from '@/lib/cache';
 import { checkRateLimit } from '@/lib/security';
 import { parsePaginationParams, createPaginationResponse } from '@/lib/pagination';
+import { unstable_noStore } from 'next/cache';
 const SEARCH_CACHE_TTL = 30; // 30s (Redis TTL)
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  unstable_noStore();
   try {
     const { searchParams } = new URL(request.url);
     let query = searchParams.get('q');

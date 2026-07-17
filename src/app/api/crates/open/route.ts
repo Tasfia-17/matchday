@@ -7,6 +7,9 @@ import { isValidId, checkRateLimit } from '@/lib/security';
 import logger from '@/lib/logger';
 
 import { REWARD_POOLS } from '@/lib/constants/crates';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 function selectReward(crateType: string) {
   // Validate crate type
@@ -38,6 +41,7 @@ function selectReward(crateType: string) {
 }
 
 export async function POST(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {

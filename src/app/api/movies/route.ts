@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,6 +85,7 @@ const MOVIE_PROVIDERS = [
 ];
 
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   try {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');

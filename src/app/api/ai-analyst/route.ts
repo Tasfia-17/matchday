@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { searchHighlights } from '@/lib/qdrantHighlights';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 const SYSTEM_PROMPT = `You are MatchDay AI — a passionate, knowledgeable sports analyst assistant.
 You help fans:
@@ -15,6 +18,7 @@ Use sports emojis sparingly to add energy ⚽🏀🏏🎾🏎️.
 Never make up specific statistics — say "I don't have that data" when unsure.`;
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const body = await req.json();
   const { message, sport } = body;
 

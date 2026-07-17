@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { checkRateLimit } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Rate limit: 5 verification attempts per 15 minutes per IP
     const clientIP = request.headers.get('x-forwarded-for') || 'unknown';

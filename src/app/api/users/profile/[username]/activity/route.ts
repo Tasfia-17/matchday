@@ -4,11 +4,13 @@ import { authOptions } from "@/lib/auth";
 import logger from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import {
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
   getProfileViewByUsername,
   getRawProfileRecordByUsername,
 } from "@/lib/profileData";
 
-export const revalidate = 30;
 
 type ActivityPayload = {
   roomId?: string;
@@ -95,6 +97,7 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ username: string }> },
 ) {
+  unstable_noStore();
   try {
     const [{ username: rawUsername }, session] = await Promise.all([
       params,

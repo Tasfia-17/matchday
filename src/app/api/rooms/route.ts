@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
 import { randomBytes } from 'crypto';
 import { hash } from 'bcryptjs';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -133,6 +134,7 @@ async function ensureDemoUsersAndRoom() {
 }
 
 export async function GET() {
+  unstable_noStore();
   try {
     // Use cache when available
     if (roomsCache.expires > Date.now()) {
@@ -218,6 +220,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {

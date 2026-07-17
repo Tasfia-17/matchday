@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { searchHighlights } from '@/lib/qdrantHighlights';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/highlights/search?q=Haaland+goal&sport=football&limit=5
  * Semantic search over highlight clips using Qdrant + Gemini embeddings.
  */
 export async function GET(req: Request) {
+  unstable_noStore();
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q');
   const sport = searchParams.get('sport') ?? undefined;

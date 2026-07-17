@@ -3,11 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 // GET — list the user's watchlist
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -26,6 +28,7 @@ export async function GET() {
 
 // POST — add an item
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -52,6 +55,7 @@ export async function POST(req: Request) {
 
 // DELETE — remove an item (pass tmdbId + tmdbType as query params)
 export async function DELETE(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 

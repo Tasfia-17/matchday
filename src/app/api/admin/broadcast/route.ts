@@ -4,8 +4,10 @@ import { authOptions } from '@/lib/auth';
 import { isSuperAdmin } from '@/lib/security';
 import { getAdminBridgeSecret, getSocketServerAdminUrl } from '@/lib/adminBridge';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {

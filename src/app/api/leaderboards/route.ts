@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  unstable_noStore();
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'watchTime';

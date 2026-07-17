@@ -3,8 +3,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth'; // Adjust based on your auth file location
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  unstable_noStore();
     try {
         const session = await getServerSession(authOptions);
         if (!session || !session.user || !session.user.id) {

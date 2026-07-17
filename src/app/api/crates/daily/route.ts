@@ -4,8 +4,12 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import rateLimiter from '@/lib/rateLimiterRedis';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import logger from '@/lib/logger';
 import { friendsCache } from '@/lib/cache';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -12,6 +13,7 @@ const FRIENDS_CACHE_TTL = 30 * 1000; // 30 seconds
 
 // Get friends list or pending requests
 export async function GET(request: Request) {
+  unstable_noStore();
   const start = Date.now();
   try {
     const session = await getServerSession(authOptions);

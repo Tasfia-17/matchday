@@ -4,12 +4,14 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import crypto from 'crypto';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 // Generate invite code for a room (REQUIRES AUTH + ROOM ACCESS)
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Security: Require authentication
     const session = await getServerSession(authOptions);
@@ -64,6 +66,7 @@ export async function POST(request: Request) {
 
 // Get room by invite code
 export async function GET(request: Request) {
+  unstable_noStore();
   try {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');

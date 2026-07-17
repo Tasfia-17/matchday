@@ -4,12 +4,14 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { invalidateFriendsCacheForBoth } from '@/lib/cache';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 // Cancel or decline friend request
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.name) {

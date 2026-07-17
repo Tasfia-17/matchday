@@ -6,8 +6,10 @@ import { getAdminBridgeSecret, getSocketServerAdminUrl } from '@/lib/adminBridge
 import { isMaintenanceMode, setMaintenanceMode } from '@/lib/maintenance';
 import { friendsCache, SEARCH_CACHE } from '@/lib/cache';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {
@@ -23,6 +25,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.name || !isSuperAdmin((session.user as any).role)) {

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses database queries
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
+  unstable_noStore();
   const resolvedParams = await params;
   const username = decodeURIComponent(resolvedParams.username);
 

@@ -3,12 +3,14 @@ import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 // GET user's watch history
 export async function GET() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   
   if (!session?.user) {
@@ -33,6 +35,7 @@ export async function GET() {
 
 // POST - Add to watch history
 export async function POST(req: Request) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   
   if (!session?.user) {
@@ -62,6 +65,7 @@ export async function POST(req: Request) {
 
 // DELETE - Clear watch history
 export async function DELETE() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
   
   if (!session?.user) {

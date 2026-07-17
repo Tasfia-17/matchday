@@ -4,12 +4,14 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { checkRateLimit } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
 
 // Revoke VIP status (admin only)
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Rate limit: 10 admin actions per minute per IP
     const clientIP = request.headers.get('x-forwarded-for') || 'unknown';

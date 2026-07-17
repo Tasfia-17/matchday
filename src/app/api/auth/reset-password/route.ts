@@ -3,8 +3,12 @@ import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { isValidPassword, checkRateLimit } from '@/lib/security';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  unstable_noStore();
   try {
     // Rate limiting - 5 attempts per 15 minutes
     const clientIP = request.headers.get('x-forwarded-for') || 'unknown';

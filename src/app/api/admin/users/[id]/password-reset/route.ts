@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth';
 import { isValidId } from '@/lib/security';
 import { sendPasswordResetEmail } from '@/lib/email';
 import * as crypto from 'crypto';
+import { unstable_noStore } from 'next/cache';
 
 // Force dynamic rendering - this route uses authentication
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.name) {

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 // Health check endpoint to verify environment variables and database
 export async function GET() {
+  unstable_noStore();
   const checks = {
     timestamp: new Date().toISOString(),
     environment: {
