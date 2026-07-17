@@ -5,7 +5,7 @@ html.skip-intro .intro-overlay {
 @tailwind components;
 @tailwind utilities;
 
-/* ===== MATCHDAY SPORTS COLOR TOKENS ===== */
+/* ===== MATCHDAY DESIGN TOKENS ===== */
 :root {
   /* Primary: Pitch Green */
   --color-primary:        #22c55e;
@@ -34,36 +34,23 @@ html.skip-intro .intro-overlay {
 
   /* Theme colour used by browsers */
   --theme-color:          #22c55e;
-}
+
   /* Spacing Scale */
   --space-1: 0.25rem;
-  /* 4px */
   --space-2: 0.5rem;
-  /* 8px */
   --space-3: 0.75rem;
-  /* 12px */
   --space-4: 1rem;
-  /* 16px */
   --space-5: 1.5rem;
-  /* 24px */
   --space-6: 2rem;
-  /* 32px */
   --space-8: 3rem;
-  /* 48px */
   --space-10: 4rem;
-  /* 64px */
 
   /* Border Radius */
   --radius-sm: 0.375rem;
-  /* 6px */
   --radius-md: 0.5rem;
-  /* 8px */
   --radius-lg: 0.75rem;
-  /* 12px */
   --radius-xl: 1rem;
-  /* 16px */
   --radius-2xl: 1.5rem;
-  /* 24px */
   --radius-full: 9999px;
 
   /* Shadows */
@@ -81,7 +68,7 @@ html.skip-intro .intro-overlay {
   --transition-slow: 300ms ease;
   --transition-slower: 500ms ease;
 
-  /* Touch Targets (Minimum 44px for accessibility) */
+  /* Touch Targets */
   --touch-target-min: 44px;
 
   /* Z-Index Scale */

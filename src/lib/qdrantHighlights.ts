@@ -1,27 +1,26 @@
 /**
  * Qdrant vector search for sports highlights.
- * Used by the AI analyst to surface relevant clips when answering fan queries.
- *
- * Collection schema:
- *   - vector: 768-dim embedding from Gemini text-embedding-004
- *   - payload: { title, sport, matchRef, videoUrl, thumbnailUrl, tags }
+ * Uses a dynamic import so the build succeeds even if QDRANT_URL is not set.
+ * At runtime, if QDRANT_URL is missing the functions degrade gracefully.
  */
 
-import { QdrantClient } from '@qdrant/js-client-rest';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const COLLECTION = 'matchday_highlights';
 const VECTOR_SIZE = 768;
 
-let _client: QdrantClient | null = null;
+// Lazy singleton — only instantiated when actually called at runtime
+let _client: any = null;
 
-function getClient(): QdrantClient {
-  if (!_client) {
-    _client = new QdrantClient({
-      url: process.env.QDRANT_URL || 'http://localhost:6333',
-      apiKey: process.env.QDRANT_API_KEY || undefined,
-    });
-  }
+async function getClient() {
+  if (_client) return _client;
+  if (!process.env.QDRANT_URL) return null;
+  // Dynamic import keeps @qdrant/js-client-rest out of the build-time module graph
+  const { QdrantClient } = await import('@qdrant/js-client-rest');
+  _client = new QdrantClient({
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY || undefined,
+  });
   return _client;
 }
 
@@ -35,7 +34,8 @@ async function embed(text: string): Promise<number[]> {
 
 /** Ensure the highlights collection exists */
 export async function ensureCollection(): Promise<void> {
-  const client = getClient();
+  const client = await getClient();
+  if (!client) return;
   try {
     const { exists } = await client.collectionExists(COLLECTION);
     if (!exists) {
@@ -60,7 +60,8 @@ export interface HighlightPayload {
 
 /** Upsert a highlight into Qdrant */
 export async function upsertHighlight(payload: HighlightPayload): Promise<void> {
-  const client = getClient();
+  const client = await getClient();
+  if (!client) return;
   const vector = await embed(
     `${payload.title} ${payload.sport} ${payload.matchRef ?? ''} ${payload.tags.join(' ')}`
   );
@@ -76,15 +77,12 @@ export async function searchHighlights(
   limit = 5,
   sportFilter?: string
 ): Promise<HighlightPayload[]> {
-  const client = getClient();
+  const client = await getClient();
+  if (!client) return [];
   try {
     const vector = await embed(query);
     const filter = sportFilter
-      ? {
-          must: [
-            { key: 'sport', match: { value: sportFilter } },
-          ],
-        }
+      ? { must: [{ key: 'sport', match: { value: sportFilter } }] }
       : undefined;
 
     const results = await client.search(COLLECTION, {
@@ -94,9 +92,7 @@ export async function searchHighlights(
       with_payload: true,
     });
 
-    return results
-      .map((r) => r.payload as HighlightPayload)
-      .filter(Boolean);
+    return results.map((r: any) => r.payload as HighlightPayload).filter(Boolean);
   } catch (err) {
     console.warn('[qdrant] searchHighlights failed:', err);
     return [];
