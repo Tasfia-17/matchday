@@ -2,11 +2,9 @@
  * Prediction scoring engine.
  *
  * XP table:
- *   Exact scoreline  → 100 XP
- *   Correct result   → 40 XP   (right winner or correct draw)
- *   Wrong            → 0 XP
- *
- * Called server-side when a MatchEvent transitions to FINISHED.
+ *   Exact scoreline  -> 100 XP
+ *   Correct result   -> 40 XP   (right winner or correct draw)
+ *   Wrong            -> 0 XP
  */
 
 import { prisma } from './prisma';
@@ -24,33 +22,23 @@ export function scorePrediction(
   actualAway: number
 ): PredictionScore {
   const isExact = predictedHome === actualHome && predictedAway === actualAway;
-
-  const predictedResult = Math.sign(predictedHome - predictedAway); // 1 | 0 | -1
+  const predictedResult = Math.sign(predictedHome - predictedAway);
   const actualResult = Math.sign(actualHome - actualAway);
   const isCorrectResult = predictedResult === actualResult;
-
   const xpEarned = isExact ? 100 : isCorrectResult ? 40 : 0;
-
   return { isExact, isCorrectResult, xpEarned };
 }
 
 /**
  * Score all pending predictions for a finished match and award XP.
- * Call this from a cron job or webhook after match status becomes FINISHED.
  */
 export async function scoreMatchPredictions(
   matchEventId: string
 ): Promise<{ scored: number; totalXp: number }> {
-  const match = await prisma.matchEvent.findUnique({
-    where: { id: matchEventId },
-  });
+  const match = await prisma.matchEvent.findUnique({ where: { id: matchEventId } });
 
-  if (!match || match.status !== 'FINISHED') {
-    return { scored: 0, totalXp: 0 };
-  }
-  if (match.homeScore === null || match.awayScore === null) {
-    return { scored: 0, totalXp: 0 };
-  }
+  if (!match || match.status !== 'FINISHED') return { scored: 0, totalXp: 0 };
+  if (match.homeScore === null || match.awayScore === null) return { scored: 0, totalXp: 0 };
 
   const predictions = await prisma.prediction.findMany({
     where: { matchEventId, isScored: false },
@@ -77,12 +65,9 @@ export async function scoreMatchPredictions(
           xpEarned: result.xpEarned,
         },
       }),
-      // Award XP to user
       prisma.user.update({
         where: { id: pred.userId },
-        data: {
-          totalXP: { increment: result.xpEarned },
-        },
+        data: { totalXP: { increment: result.xpEarned } },
       }),
     ]);
 
@@ -93,15 +78,16 @@ export async function scoreMatchPredictions(
   return { scored, totalXp };
 }
 
-/** Leaderboard: top fans by prediction XP this week */
+/** Leaderboard: top fans by total prediction XP */
 export async function getPredictionLeaderboard(
   limit = 20
 ): Promise<Array<{ userId: string; username: string; totalXp: number; exactCount: number }>> {
+  // Raw aggregation via groupBy
   const results = await prisma.prediction.groupBy({
     by: ['userId'],
     where: { isScored: true },
     _sum: { xpEarned: true },
-    _count: { isExact: true },
+    _count: { id: true },
     orderBy: { _sum: { xpEarned: 'desc' } },
     take: limit,
   });
@@ -113,10 +99,18 @@ export async function getPredictionLeaderboard(
 
   const userMap = new Map(users.map((u) => [u.id, u.username]));
 
+  // Count exact predictions per user separately (groupBy _count doesn't filter by bool)
+  const exactCounts = await prisma.prediction.groupBy({
+    by: ['userId'],
+    where: { isScored: true, isExact: true },
+    _count: { id: true },
+  });
+  const exactMap = new Map(exactCounts.map((e) => [e.userId, e._count.id]));
+
   return results.map((r) => ({
     userId: r.userId,
     username: userMap.get(r.userId) ?? 'Unknown',
     totalXp: r._sum.xpEarned ?? 0,
-    exactCount: r._count.isExact ?? 0,
+    exactCount: exactMap.get(r.userId) ?? 0,
   }));
 }

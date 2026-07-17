@@ -7,12 +7,13 @@ import { scoreMatchPredictions } from '@/lib/predictionEngine';
 /** GET /api/matches/[matchId] — match detail with user's prediction */
 export async function GET(
   req: Request,
-  { params }: { params: { matchId: string } }
+  { params }: { params: Promise<{ matchId: string }> }
 ) {
+  const { matchId } = await params;
   const session = await getServerSession(authOptions);
 
   const match = await prisma.matchEvent.findUnique({
-    where: { id: params.matchId },
+    where: { id: matchId },
   });
 
   if (!match) {
@@ -25,32 +26,27 @@ export async function GET(
       where: {
         userId_matchEventId: {
           userId: (session.user as any).id,
-          matchEventId: params.matchId,
+          matchEventId: matchId,
         },
       },
     });
   }
 
-  // Prediction stats
-  const stats = await prisma.prediction.groupBy({
-    by: [],
-    where: { matchEventId: params.matchId },
-    _count: { id: true },
+  const totalPredictions = await prisma.prediction.count({
+    where: { matchEventId: matchId },
   });
 
-  return NextResponse.json({
-    match,
-    userPrediction,
-    totalPredictions: stats[0]?._count.id ?? 0,
-  });
+  return NextResponse.json({ match, userPrediction, totalPredictions });
 }
 
 /** POST /api/matches/[matchId] — admin: update result and trigger scoring */
 export async function POST(
   req: Request,
-  { params }: { params: { matchId: string } }
+  { params }: { params: Promise<{ matchId: string }> }
 ) {
+  const { matchId } = await params;
   const session = await getServerSession(authOptions);
+
   if (!session?.user || (session.user as any).role !== 'ADMIN') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
@@ -59,7 +55,7 @@ export async function POST(
   const { homeScore, awayScore, status } = body;
 
   const updated = await prisma.matchEvent.update({
-    where: { id: params.matchId },
+    where: { id: matchId },
     data: {
       homeScore: homeScore ?? undefined,
       awayScore: awayScore ?? undefined,
@@ -69,7 +65,7 @@ export async function POST(
 
   let scored = null;
   if (updated.status === 'FINISHED') {
-    scored = await scoreMatchPredictions(params.matchId);
+    scored = await scoreMatchPredictions(matchId);
   }
 
   return NextResponse.json({ match: updated, scored });
