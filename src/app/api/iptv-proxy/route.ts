@@ -4,6 +4,8 @@ import net from 'net';
 import logger from '@/lib/logger';
 import { unstable_noStore } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * IPTV Proxy Route
  * 

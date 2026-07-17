@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import logger from "@/lib/logger";
 import {
+import { unstable_noStore } from 'next/cache';
   getPassportBookForUser,
   getRawProfileRecordByUsername,
 } from "@/lib/profileData";
@@ -11,6 +12,7 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ username: string }> },
 ) {
+  unstable_noStore();
   try {
     const { username: rawUsername } = await params;
     const username = decodeURIComponent(rawUsername);

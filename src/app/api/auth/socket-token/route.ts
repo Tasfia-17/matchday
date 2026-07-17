@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 // This endpoint returns the raw NextAuth JWT so the socket client
 // can pass it in the handshake `auth.token` field.
 // The httpOnly cookie is unreadable from the browser, so we relay it here.
 export async function GET(request: Request) {
+  unstable_noStore();
   try {
     const token = await getToken({
       req: request as any,

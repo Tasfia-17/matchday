@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import logger from '@/lib/logger';
+import { unstable_noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -10,6 +13,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  unstable_noStore();
   const resolvedParams = await params;
   const tvId = resolvedParams.id;
   const { searchParams } = new URL(request.url);

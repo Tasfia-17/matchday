@@ -8,6 +8,8 @@ import { friendsCache, SEARCH_CACHE } from '@/lib/cache';
 import logger from '@/lib/logger';
 import { unstable_noStore } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   unstable_noStore();
   const session = await getServerSession(authOptions);

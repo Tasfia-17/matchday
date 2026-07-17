@@ -6,6 +6,8 @@ import { getAdminBridgeSecret, getSocketServerAdminUrl } from '@/lib/adminBridge
 import logger from '@/lib/logger';
 import { unstable_noStore } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   unstable_noStore();
   const session = await getServerSession(authOptions);
