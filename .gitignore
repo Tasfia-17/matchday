@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Environment files (never commit real secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Next.js build output
+.next/
+out/
+
+# Server build output
+dist/
+
+# Prisma
+/generated/prisma
+prisma/*.db
+prisma/*.db-journal
+
+# Redis
+dump.rdb
+redis-data.rdb
+
+# TypeScript
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+prisma-debug-error.log
+audit-report.json
+
+# Test artifacts
+testsprite_tests/tmp/
+scripts/ai-office/reports/
+
+# Misc
+.agent/
+.codex-logs/
