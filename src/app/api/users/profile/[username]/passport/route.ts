@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import logger from "@/lib/logger";
 import {
-import { unstable_noStore } from 'next/cache';
   getPassportBookForUser,
   getRawProfileRecordByUsername,
 } from "@/lib/profileData";
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = "force-dynamic";
 

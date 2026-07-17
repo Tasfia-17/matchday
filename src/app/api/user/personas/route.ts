@@ -9,10 +9,10 @@ import {
   hasProfileShowcaseAccess,
 } from "@/lib/profileData";
 import {
-import { unstable_noStore } from 'next/cache';
   PROFILE_SCENE_EFFECT_IDS,
   PROFILE_SCENE_IDS,
 } from "@/lib/profileTypes";
+import { unstable_noStore } from 'next/cache';
 
 export const dynamic = "force-dynamic";
 

@@ -4,13 +4,12 @@ import { authOptions } from "@/lib/auth";
 import logger from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import {
-import { unstable_noStore } from 'next/cache';
-
-export const dynamic = 'force-dynamic';
   getProfileViewByUsername,
   getRawProfileRecordByUsername,
 } from "@/lib/profileData";
+import { unstable_noStore } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
 
 type ActivityPayload = {
   roomId?: string;
